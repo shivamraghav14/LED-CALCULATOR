@@ -1,0 +1,18 @@
+{
+  "name": "shivam-video-led-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "next": "^13.0.0",
+    "recharts": "^2.1.9",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.23"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  }
+}

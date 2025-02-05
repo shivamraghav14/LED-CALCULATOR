@@ -1,6 +1,8 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import Image from 'next/image';
+import ShivamLogo from '@/public/shivam_logo.jpeg';
 
 const ledModels = {
   "CRYSTAL 1.9MM": { pixelDensity: 256, powerPerCabinet: 150, weightPerCabinet: 8 },
@@ -10,7 +12,10 @@ const ledModels = {
   "PL 4.8MM": { pixelDensity: 104, powerPerCabinet: 110, weightPerCabinet: 6 },
   "CL 2.9MM (Curved)": { pixelDensity: 168, powerPerCabinet: 130, weightPerCabinet: 7, isCurved: true },
   "CL 3.9MM (Curved)": { pixelDensity: 128, powerPerCabinet: 120, weightPerCabinet: 6.5, isCurved: true },
+  "LED Standee 2.5MM": { pixelDensity: 256, width: 640, height: 1920, powerPerCabinet: 600, weightPerCabinet: 50 },
 };
+
+const unitConversion = { meters: 1, mm: 0.001, inches: 0.0254, feet: 0.3048 };
 
 const getAspectRatio = (width, height) => {
   const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
@@ -20,21 +25,20 @@ const getAspectRatio = (width, height) => {
 
 export default function LEDCalculator() {
   const [model, setModel] = useState("CRYSTAL 1.9MM");
-  const [width, setWidth] = useState(2);
-  const [height, setHeight] = useState(2);
-  const [unit, setUnit] = useState("meters");
-  const [curvedAngle, setCurvedAngle] = useState(0);
-
-  const unitConversion = { meters: 1, mm: 1000, inches: 39.37, feet: 3.281 };
+  const [width, setWidth] = useState(2000);
+  const [height, setHeight] = useState(1000);
+  const [unit, setUnit] = useState("mm");
 
   const convertSize = (value) => value * unitConversion[unit];
 
   const calculateValues = () => {
     const { pixelDensity, powerPerCabinet, weightPerCabinet } = ledModels[model];
-    const totalWidthPixels = Math.round(convertSize(width) / 0.5 * pixelDensity);
-    const totalHeightPixels = Math.round(convertSize(height) / 0.5 * pixelDensity);
+    const convertedWidth = convertSize(width);
+    const convertedHeight = convertSize(height);
+    const totalWidthPixels = Math.round((convertedWidth / 0.5) * pixelDensity);
+    const totalHeightPixels = Math.round((convertedHeight / 0.5) * pixelDensity);
     const aspectRatio = getAspectRatio(totalWidthPixels, totalHeightPixels);
-    const totalCabinets = Math.ceil((convertSize(width) / 0.5) * (convertSize(height) / 0.5));
+    const totalCabinets = Math.ceil((convertedWidth / 0.5) * (convertedHeight / 0.5));
     const totalPower = totalCabinets * powerPerCabinet;
     const totalWeight = totalCabinets * weightPerCabinet;
     return { totalWidthPixels, totalHeightPixels, aspectRatio, totalPower, totalWeight, totalCabinets };
@@ -44,6 +48,7 @@ export default function LEDCalculator() {
 
   return (
     <div className="p-6 bg-black text-white rounded-lg shadow-xl max-w-4xl mx-auto">
+      <Image src={ShivamLogo} alt="Shivam Video Logo" className="mx-auto mb-4 w-40" />
       <h1 className="text-3xl font-bold mb-6 text-center">Shivam Video LED Calculator</h1>
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -53,14 +58,6 @@ export default function LEDCalculator() {
               <option key={m} value={m}>{m}</option>
             ))}
           </select>
-        </div>
-        <div>
-          <label>Width (in {unit})</label>
-          <input type="number" value={width} onChange={(e) => setWidth(parseFloat(e.target.value))} />
-        </div>
-        <div>
-          <label>Height (in {unit})</label>
-          <input type="number" value={height} onChange={(e) => setHeight(parseFloat(e.target.value))} />
         </div>
         <div>
           <label>Unit</label>

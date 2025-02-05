@@ -1,8 +1,8 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import Image from 'next/image';
-import ShivamLogo from '@/public/shivam_logo.jpeg';
+import Image from "next/image";
+import ShivamLogo from "../public/shivam_logo.jpeg";
 
 const ledModels = {
   "CRYSTAL 1.9MM": { pixelDensity: 256, powerPerCabinet: 150, weightPerCabinet: 8 },

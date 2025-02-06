@@ -23,9 +23,9 @@ const getAspectRatio = (width, height) => {
 
 export default function LEDCalculator() {
   const [model, setModel] = useState("CRYSTAL 1.9MM");
-  const [width, setWidth] = useState(2000);
-  const [height, setHeight] = useState(1000);
-  const [unit, setUnit] = useState("mm");
+  const [width, setWidth] = useState(2);
+  const [height, setHeight] = useState(2);
+  const [unit, setUnit] = useState("meters");
 
   const convertSize = (value) => value * unitConversion[unit];
 

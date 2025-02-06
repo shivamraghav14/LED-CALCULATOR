@@ -1,7 +1,6 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import Image from "next/image";
 
 const ledModels = {
   "CRYSTAL 1.9MM": { pixelDensity: 256, powerPerCabinet: 150, weightPerCabinet: 8 },
@@ -47,7 +46,6 @@ export default function LEDCalculator() {
 
   return (
     <div className="p-6 bg-black text-white rounded-lg shadow-xl max-w-4xl mx-auto">
-      <Image src="/shivam-logo-final-1.png" alt="Shivam Video Logo" width={200} height={100} className="mx-auto mb-4" />
       <h1 className="text-3xl font-bold mb-6 text-center">Shivam Video LED Calculator</h1>
       <div className="grid grid-cols-2 gap-4">
         <div>

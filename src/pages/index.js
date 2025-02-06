@@ -3,14 +3,14 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const ledModels = {
-  "CRYSTAL 1.9MM": { pixelDensity: 256, powerPerCabinet: 150, weightPerCabinet: 8 },
-  "Spider 2.6MM": { pixelDensity: 192, powerPerCabinet: 140, weightPerCabinet: 7.5 },
-  "HB2 2.9MM": { pixelDensity: 168, powerPerCabinet: 130, weightPerCabinet: 7 },
-  "BM 3.9MM": { pixelDensity: 128, powerPerCabinet: 120, weightPerCabinet: 6.5 },
-  "PL 4.8MM": { pixelDensity: 104, powerPerCabinet: 110, weightPerCabinet: 6 },
-  "CL 2.9MM (Curved)": { pixelDensity: 168, powerPerCabinet: 130, weightPerCabinet: 7, isCurved: true },
-  "CL 3.9MM (Curved)": { pixelDensity: 128, powerPerCabinet: 120, weightPerCabinet: 6.5, isCurved: true },
-  "LED Standee 2.5MM": { pixelDensity: 256, width: 640, height: 1920, powerPerCabinet: 600, weightPerCabinet: 50 },
+  "CRYSTAL 1.9MM": { pixelDensity: 256, powerPerCabinet: 150, weightPerCabinet: 8, cabinetSize: [500, 500] },
+  "Spider 2.6MM": { pixelDensity: 192, powerPerCabinet: 140, weightPerCabinet: 7.5, cabinetSize: [500, 500] },
+  "HB2 2.9MM": { pixelDensity: 168, powerPerCabinet: 130, weightPerCabinet: 7, cabinetSize: [500, 500] },
+  "BM 3.9MM": { pixelDensity: 128, powerPerCabinet: 120, weightPerCabinet: 6.5, cabinetSize: [500, 500] },
+  "PL 4.8MM": { pixelDensity: 104, powerPerCabinet: 110, weightPerCabinet: 6, cabinetSize: [500, 500] },
+  "CL 2.9MM (Curved)": { pixelDensity: 168, powerPerCabinet: 130, weightPerCabinet: 7, isCurved: true, cabinetSize: [500, 500] },
+  "CL 3.9MM (Curved)": { pixelDensity: 128, powerPerCabinet: 120, weightPerCabinet: 6.5, isCurved: true, cabinetSize: [500, 500] },
+  "LED Standee 2.5MM": { pixelDensity: 256, width: 640, height: 1920, powerPerCabinet: 600, weightPerCabinet: 50, cabinetSize: [640, 1920] },
 };
 
 const unitConversion = { meters: 1, mm: 0.001, inches: 0.0254, feet: 0.3048 };
@@ -30,13 +30,13 @@ export default function LEDCalculator() {
   const convertSize = (value) => value * unitConversion[unit];
 
   const calculateValues = () => {
-    const { pixelDensity, powerPerCabinet, weightPerCabinet } = ledModels[model];
+    const { pixelDensity, powerPerCabinet, weightPerCabinet, cabinetSize } = ledModels[model];
     const convertedWidth = convertSize(width);
     const convertedHeight = convertSize(height);
-    const totalWidthPixels = Math.round((convertedWidth / 0.5) * pixelDensity);
-    const totalHeightPixels = Math.round((convertedHeight / 0.5) * pixelDensity);
+    const totalWidthPixels = Math.round((convertedWidth / (cabinetSize[0] / 1000)) * pixelDensity);
+    const totalHeightPixels = Math.round((convertedHeight / (cabinetSize[1] / 1000)) * pixelDensity);
     const aspectRatio = getAspectRatio(totalWidthPixels, totalHeightPixels);
-    const totalCabinets = Math.ceil((convertedWidth / 0.5) * (convertedHeight / 0.5));
+    const totalCabinets = Math.ceil((convertedWidth / (cabinetSize[0] / 1000)) * (convertedHeight / (cabinetSize[1] / 1000)));
     const totalPower = totalCabinets * powerPerCabinet;
     const totalWeight = totalCabinets * weightPerCabinet;
     return { totalWidthPixels, totalHeightPixels, aspectRatio, totalPower, totalWeight, totalCabinets };

@@ -13,11 +13,19 @@ const ledModels = {
 
 const unitConversion = { meters: 1, mm: 0.001, inches: 0.0254, feet: 0.3048 };
 
+const calculateCircleCabinets = (diameter, degree, cabinetSize) => {
+  const circumference = Math.PI * diameter;
+  const arcLength = (circumference * degree) / 360;
+  return Math.ceil(arcLength / (cabinetSize[0] / 1000));
+};
+
 export default function LEDCalculator() {
   const [model, setModel] = useState("CRYSTAL 1.9MM");
   const [width, setWidth] = useState(1);
   const [height, setHeight] = useState(1);
   const [unit, setUnit] = useState("meters");
+  const [diameter, setDiameter] = useState(1);
+  const [degree, setDegree] = useState(360);
 
   const convertSize = (value) => value * unitConversion[unit];
 
@@ -30,10 +38,11 @@ export default function LEDCalculator() {
     const totalCabinets = Math.ceil((convertedWidth / (cabinetSize[0] / 1000)) * (convertedHeight / (cabinetSize[1] / 1000)));
     const totalPower = totalCabinets * powerPerCabinet;
     const totalWeight = totalCabinets * weightPerCabinet;
-    return { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets };
+    const circleCabinets = calculateCircleCabinets(diameter, degree, cabinetSize);
+    return { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets };
   };
 
-  const { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets } = calculateValues();
+  const { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets } = calculateValues();
 
   return (
     <div className="p-6 bg-black text-white rounded-lg shadow-xl max-w-4xl mx-auto">
@@ -64,6 +73,14 @@ export default function LEDCalculator() {
             <option value="feet">Feet</option>
           </select>
         </div>
+        <div>
+          <label>Circle Diameter ({unit})</label>
+          <input type="number" value={diameter} onChange={(e) => setDiameter(parseFloat(e.target.value) || 1)} />
+        </div>
+        <div>
+          <label>Circle Angle (Degrees)</label>
+          <input type="number" value={degree} onChange={(e) => setDegree(parseFloat(e.target.value) || 360)} />
+        </div>
       </div>
 
       <div className="mt-6 bg-gray-800 text-white p-4 rounded-md">
@@ -73,6 +90,7 @@ export default function LEDCalculator() {
         <p>Total Cabinets: {totalCabinets}</p>
         <p>Total Power: {totalPower}W</p>
         <p>Total Weight: {totalWeight}kg</p>
+        <p>Circle Cabinets Required: {circleCabinets}</p>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { jsPDF } from "jspdf";
 
 const ledModels = {
@@ -27,7 +27,6 @@ export default function LEDCalculator() {
   const [unit, setUnit] = useState("meters");
   const [diameter, setDiameter] = useState(1);
   const [degree, setDegree] = useState(360);
-  const canvasRef = useRef(null);
 
   const convertSize = (value) => value * unitConversion[unit];
 
@@ -48,7 +47,9 @@ export default function LEDCalculator() {
 
   const generatePDF = () => {
     const doc = new jsPDF();
+    doc.setFontSize(16);
     doc.text("Shivam Video LED Calculator Report", 10, 10);
+    doc.setFontSize(12);
     doc.text(`Model: ${model}`, 10, 20);
     doc.text(`Total Width Pixels: ${totalWidthPixels}px`, 10, 30);
     doc.text(`Total Height Pixels: ${totalHeightPixels}px`, 10, 40);
@@ -56,13 +57,49 @@ export default function LEDCalculator() {
     doc.text(`Total Power: ${totalPower}W`, 10, 60);
     doc.text(`Total Weight: ${totalWeight}kg`, 10, 70);
     doc.text(`Circle Cabinets Required: ${circleCabinets}`, 10, 80);
+    doc.text("© Shivam Video Pvt. Ltd.", 10, 100);
     doc.save("LED_Calculator_Report.pdf");
   };
 
   return (
     <div className="p-6 bg-black text-white rounded-lg shadow-xl max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">Shivam Video LED Calculator</h1>
-      <canvas ref={canvasRef} width={400} height={200} className="bg-white"></canvas>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label>LED Model</label>
+          <select value={model} onChange={(e) => setModel(e.target.value)}>
+            {Object.keys(ledModels).map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label>Width ({unit})</label>
+          <input type="number" value={width} onChange={(e) => setWidth(parseFloat(e.target.value) || 1)} />
+        </div>
+        <div>
+          <label>Height ({unit})</label>
+          <input type="number" value={height} onChange={(e) => setHeight(parseFloat(e.target.value) || 1)} />
+        </div>
+        <div>
+          <label>Unit</label>
+          <select value={unit} onChange={(e) => setUnit(e.target.value)}>
+            <option value="meters">Meters</option>
+            <option value="mm">Millimeters</option>
+            <option value="inches">Inches</option>
+            <option value="feet">Feet</option>
+          </select>
+        </div>
+      </div>
+      <div className="mt-6 bg-gray-800 text-white p-4 rounded-md">
+        <h2 className="text-xl font-semibold">Results</h2>
+        <p>Total Width Pixels: {totalWidthPixels}px</p>
+        <p>Total Height Pixels: {totalHeightPixels}px</p>
+        <p>Total Cabinets: {totalCabinets}</p>
+        <p>Total Power: {totalPower}W</p>
+        <p>Total Weight: {totalWeight}kg</p>
+        <p>Circle Cabinets Required: {circleCabinets}</p>
+      </div>
       <button onClick={generatePDF} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Download Report</button>
     </div>
   );

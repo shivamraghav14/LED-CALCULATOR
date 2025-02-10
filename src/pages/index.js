@@ -1,6 +1,4 @@
 import { useState } from "react";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 
 const ledModels = {
   "CRYSTAL 1.9MM": { pixelDensity: 256, powerPerCabinet: 150, weightPerCabinet: 8, cabinetSize: [500, 500] },
@@ -15,16 +13,10 @@ const ledModels = {
 
 const unitConversion = { meters: 1, mm: 0.001, inches: 0.0254, feet: 0.3048 };
 
-const getAspectRatio = (width, height) => {
-  const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
-  const divisor = gcd(width, height);
-  return `${width / divisor}:${height / divisor}`;
-};
-
 export default function LEDCalculator() {
   const [model, setModel] = useState("CRYSTAL 1.9MM");
-  const [width, setWidth] = useState(2);
-  const [height, setHeight] = useState(2);
+  const [width, setWidth] = useState(1);
+  const [height, setHeight] = useState(1);
   const [unit, setUnit] = useState("meters");
 
   const convertSize = (value) => value * unitConversion[unit];
@@ -35,14 +27,13 @@ export default function LEDCalculator() {
     const convertedHeight = convertSize(height);
     const totalWidthPixels = Math.round((convertedWidth / (cabinetSize[0] / 1000)) * pixelDensity);
     const totalHeightPixels = Math.round((convertedHeight / (cabinetSize[1] / 1000)) * pixelDensity);
-    const aspectRatio = getAspectRatio(totalWidthPixels, totalHeightPixels);
     const totalCabinets = Math.ceil((convertedWidth / (cabinetSize[0] / 1000)) * (convertedHeight / (cabinetSize[1] / 1000)));
     const totalPower = totalCabinets * powerPerCabinet;
     const totalWeight = totalCabinets * weightPerCabinet;
-    return { totalWidthPixels, totalHeightPixels, aspectRatio, totalPower, totalWeight, totalCabinets };
+    return { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets };
   };
 
-  const { totalWidthPixels, totalHeightPixels, aspectRatio, totalPower, totalWeight, totalCabinets } = calculateValues();
+  const { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets } = calculateValues();
 
   return (
     <div className="p-6 bg-black text-white rounded-lg shadow-xl max-w-4xl mx-auto">
@@ -55,6 +46,14 @@ export default function LEDCalculator() {
               <option key={m} value={m}>{m}</option>
             ))}
           </select>
+        </div>
+        <div>
+          <label>Width ({unit})</label>
+          <input type="number" value={width} onChange={(e) => setWidth(parseFloat(e.target.value) || 1)} />
+        </div>
+        <div>
+          <label>Height ({unit})</label>
+          <input type="number" value={height} onChange={(e) => setHeight(parseFloat(e.target.value) || 1)} />
         </div>
         <div>
           <label>Unit</label>
@@ -71,13 +70,10 @@ export default function LEDCalculator() {
         <h2 className="text-xl font-semibold">Results</h2>
         <p>Total Width Pixels: {totalWidthPixels}px</p>
         <p>Total Height Pixels: {totalHeightPixels}px</p>
-        <p>Aspect Ratio: {aspectRatio}</p>
         <p>Total Cabinets: {totalCabinets}</p>
         <p>Total Power: {totalPower}W</p>
         <p>Total Weight: {totalWeight}kg</p>
       </div>
-
-      <p className="mt-6 text-sm text-center opacity-70">© 2025 Shivam Video Pvt. Ltd. - Proprietary & Confidential</p>
     </div>
   );
 }

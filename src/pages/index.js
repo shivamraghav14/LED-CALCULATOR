@@ -28,7 +28,7 @@ export default function LEDCalculator() {
   const [unit, setUnit] = useState("meters");
   const [diameter, setDiameter] = useState(1);
   const [degree, setDegree] = useState(360);
-  const [curveAngle, setCurveAngle] = useState(0);
+  const [curveAngleState, setCurveAngleState] = useState(0);
 
   const convertSize = (value) => value * unitConversion[unit];
 
@@ -42,7 +42,7 @@ export default function LEDCalculator() {
     const totalPower = totalCabinets * powerPerCabinet;
     const totalWeight = totalCabinets * weightPerCabinet;
     const circleCabinets = calculateCircleCabinets(diameter, degree, cabinetSize);
-    return { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets, curveAngle };
+    return { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets, curveAngle: curveAngleState };
   };
 
   const { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets, curveAngle } = calculateValues();
@@ -68,8 +68,8 @@ export default function LEDCalculator() {
   };
 
   return (
-    <div className="p-6 bg-gradient-to-br from-gray-700 via-gray-900 to-black text-white rounded-lg shadow-2xl max-w-4xl mx-auto border border-gray-600">
-      <h1 className="text-4xl font-extrabold mb-6 text-center text-yellow-400">Shivam Video LED Calculator</h1>
+    <div className="p-6 bg-gradient-to-br from-gray-700 to-gray-800 text-white rounded-lg shadow-xl max-w-4xl mx-auto border border-gray-600">
+      <h1 className="text-4xl font-bold mb-6 text-center text-yellow-400">Shivam Video LED Calculator</h1>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label>LED Model</label>

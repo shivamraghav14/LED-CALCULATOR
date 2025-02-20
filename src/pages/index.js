@@ -42,10 +42,11 @@ export default function LEDCalculator() {
     const totalPower = totalCabinets * powerPerCabinet;
     const totalWeight = totalCabinets * weightPerCabinet;
     const circleCabinets = calculateCircleCabinets(diameter, degree, cabinetSize);
-    return { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets, curveAngle: curveAngleState };
+    const aspectRatio = (convertedWidth / convertedHeight).toFixed(2);
+    return { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets, curveAngle: curveAngleState, aspectRatio };
   };
 
-  const { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets, curveAngle } = calculateValues();
+  const { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets, curveAngle, aspectRatio } = calculateValues();
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -63,6 +64,7 @@ export default function LEDCalculator() {
     doc.text(`Total Power: ${totalPower}W`, 10, 100);
     doc.text(`Total Weight: ${totalWeight}kg`, 10, 110);
     doc.text(`Circle Cabinets Required: ${circleCabinets}`, 10, 120);
+    doc.text(`Aspect Ratio: ${aspectRatio}`, 10, 130);
     doc.text("© Shivam Video Pvt. Ltd.", 10, 140);
     doc.save("LED_Calculator_Report.pdf");
   };

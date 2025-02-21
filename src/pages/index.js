@@ -49,6 +49,16 @@ export default function LEDCalculator() {
 
   const { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets, curveAngle, aspectRatio } = calculateValues();
 
+  useEffect(() => {
+    const canvas = pixelCanvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(50, 50, totalWidthPixels / 10, totalHeightPixels / 10);
+  }, [totalWidthPixels, totalHeightPixels]);
+
   return (
     <div className="p-6 bg-gradient-to-br from-gray-700 to-gray-800 text-white rounded-lg shadow-xl max-w-4xl mx-auto border border-gray-600">
       <h1 className="text-4xl font-bold mb-6 text-center text-yellow-400">Shivam Video LED Calculator</h1>
@@ -79,6 +89,10 @@ export default function LEDCalculator() {
         <p>Total Weight: {totalWeight}kg</p>
         <p>Circle Cabinets Required: {circleCabinets}</p>
         <p>Aspect Ratio: {aspectRatio}</p>
+      </div>
+      <div className="mt-6 p-4 bg-black rounded-lg text-center text-yellow-400 border border-yellow-500">
+        <h2 className="text-2xl font-bold">Pixel Map Visualization</h2>
+        <canvas ref={pixelCanvasRef} width={500} height={250} className="bg-white"></canvas>
       </div>
       <button className="mt-4 px-4 py-2 bg-yellow-500 text-black font-bold rounded shadow-lg">Download Report</button>
     </div>

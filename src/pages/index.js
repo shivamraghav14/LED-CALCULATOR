@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { jsPDF } from "jspdf";
 
 const ledModels = {
@@ -29,6 +29,7 @@ export default function LEDCalculator() {
   const [diameter, setDiameter] = useState(1);
   const [degree, setDegree] = useState(360);
   const [curveAngleState, setCurveAngleState] = useState(0);
+  const pixelCanvasRef = useRef(null);
 
   const convertSize = (value) => value * unitConversion[unit];
 
@@ -48,26 +49,15 @@ export default function LEDCalculator() {
 
   const { totalWidthPixels, totalHeightPixels, totalPower, totalWeight, totalCabinets, circleCabinets, curveAngle, aspectRatio } = calculateValues();
 
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("Shivam Video LED Calculator Report", 10, 10);
-    doc.setFontSize(12);
-    doc.text(`Model: ${model}`, 10, 20);
-    doc.text(`Design: ${design}`, 10, 30);
-    doc.text(`Curve Angle: ${curveAngle}°`, 10, 40);
-    doc.text(`Width: ${width} ${unit}`, 10, 50);
-    doc.text(`Height: ${height} ${unit}`, 10, 60);
-    doc.text(`Total Width Pixels: ${totalWidthPixels}px`, 10, 70);
-    doc.text(`Total Height Pixels: ${totalHeightPixels}px`, 10, 80);
-    doc.text(`Total Cabinets: ${totalCabinets}`, 10, 90);
-    doc.text(`Total Power: ${totalPower}W`, 10, 100);
-    doc.text(`Total Weight: ${totalWeight}kg`, 10, 110);
-    doc.text(`Circle Cabinets Required: ${circleCabinets}`, 10, 120);
-    doc.text(`Aspect Ratio: ${aspectRatio}`, 10, 130);
-    doc.text("© Shivam Video Pvt. Ltd.", 10, 140);
-    doc.save("LED_Calculator_Report.pdf");
-  };
+  useEffect(() => {
+    const canvas = pixelCanvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(50, 50, totalWidthPixels / 10, totalHeightPixels / 10);
+  }, [totalWidthPixels, totalHeightPixels]);
 
   return (
     <div className="p-6 bg-gradient-to-br from-gray-700 to-gray-800 text-white rounded-lg shadow-xl max-w-4xl mx-auto border border-gray-600">
@@ -82,16 +72,19 @@ export default function LEDCalculator() {
           </select>
         </div>
         <div>
-          <label>Design Type</label>
-          <select value={design} onChange={(e) => setDesign(e.target.value)}>
-            <option value="Flat Wall">Flat Wall</option>
-            <option value="Curve LED">Curve LED</option>
-            <option value="Circular LED">Circular LED</option>
-            <option value="Corner LED">Corner LED</option>
-          </select>
+          <label>Width ({unit})</label>
+          <input type="number" value={width} onChange={(e) => setWidth(parseFloat(e.target.value))} />
+        </div>
+        <div>
+          <label>Height ({unit})</label>
+          <input type="number" value={height} onChange={(e) => setHeight(parseFloat(e.target.value))} />
         </div>
       </div>
-      <button onClick={generatePDF} className="mt-4 px-4 py-2 bg-yellow-500 text-black font-bold rounded shadow-lg">Download Report</button>
+      <div className="mt-6 p-4 bg-black rounded-lg text-center text-yellow-400 border border-yellow-500">
+        <h2 className="text-2xl font-bold">Pixel Map Visualization</h2>
+        <canvas ref={pixelCanvasRef} width={500} height={250} className="bg-white"></canvas>
+      </div>
+      <button className="mt-4 px-4 py-2 bg-yellow-500 text-black font-bold rounded shadow-lg">Download Report</button>
     </div>
   );
 }
